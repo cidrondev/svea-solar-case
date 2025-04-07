@@ -45,9 +45,6 @@ export default function Form() {
         <Card className="w-full">
             <CardHeader>
                 <CardTitle>
-                    <Button asChild size="icon">
-                        <Link href="/"><ChevronLeft /></Link>
-                    </Button>
                     <h1>Svea solar calculator</h1>
                 </CardTitle>
             </CardHeader>
@@ -106,7 +103,12 @@ export default function Form() {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit">Submit</Button>
+                        <div className='flex justify-between'>
+                            <Button asChild>
+                                <Link href="/"><ChevronLeft /> Back</Link>
+                            </Button>
+                            <Button type="submit">Submit</Button>
+                        </div>
                     </form>
                 </ShadForm>
             </CardContent>

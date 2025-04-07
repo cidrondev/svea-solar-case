@@ -29,6 +29,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from "react";
 
 const formSchema = z.object({
   averageBill: z.string(),
@@ -55,6 +56,9 @@ const roofSizes = [
 
 
 export default function Home() {
+
+  const [open, setOpen] = useState(false);
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -84,7 +88,7 @@ export default function Home() {
               control={form.control}
               name="averageBill"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-[320px]">
                   <FormLabel>Monthly bill</FormLabel>
                   <FormControl>
                     <Input {...field} />
@@ -99,13 +103,13 @@ export default function Home() {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Roof size</FormLabel>
-                  <Popover>
+                  <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
                           variant="outline"
                           className={cn(
-                            "w-[200px] justify-between",
+                            "w-[320px] justify-between",
                             !field.value && "text-muted-foreground"
                           )}
                         >
@@ -118,7 +122,7 @@ export default function Home() {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
+                    <PopoverContent className="w-[320px] p-0">
                       <Command>
                         <CommandList>
                           <CommandGroup>
@@ -128,17 +132,10 @@ export default function Home() {
                                 key={roofSize.value}
                                 onSelect={() => {
                                   form.setValue("roofSize", roofSize.value)
+                                  setOpen(false)
                                 }}
                               >
                                 {roofSize.label}
-                                <Check
-                                  className={cn(
-                                    "ml-auto",
-                                    roofSize.value === field.value
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
                               </CommandItem>
                             ))}
                           </CommandGroup>
@@ -150,7 +147,9 @@ export default function Home() {
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <div className="flex justify-end">
+              <Button type="submit">Submit</Button>
+            </div>
           </form>
         </ShadForm>
       </CardContent>

@@ -19,22 +19,28 @@ export default function Home() {
     const bill = Number(searchParams.get('bill'));
     const roofSize = searchParams.get('roofSize');
     const savings = bill / roofSizeNumber[roofSize];
+    const co2 = bill / (roofSizeNumber[roofSize]+13);
+
 
     return (
         <Card>
             <CardHeader className='flex min-w-2xs'>
-                <Button asChild size="icon">
-                    <Link href="/"><ChevronLeft /></Link>
-                </Button>
-                <CardTitle>Svea solar calculator</CardTitle>
+                <CardTitle><h1>Svea solar calculator</h1></CardTitle>
             </CardHeader>
-            <CardContent>
-                <h2>Monthly Savings</h2>
-                <p>{savings} sek</p>
-                <Button asChild><Link href={{
-                    pathname: '/form',
-                    query: { bill: bill, roofSize: roofSize, savings: savings},
-                }}>Next</Link></Button>
+            <CardContent className="space-y-8">
+                <p>Monthly savings: {savings} sek</p>
+                <p>co2 savings: {co2} g</p>
+                <div className='flex justify-between'>
+                    <Button asChild>
+                        <Link href="/"><ChevronLeft /> Back</Link>
+                    </Button>
+                    <Button asChild>
+                        <Link href={{
+                            pathname: '/form',
+                            query: { bill: bill, roofSize: roofSize, savings: savings, co2: co2 },
+                        }}>Next</Link>
+                    </Button>
+                </div>
             </CardContent>
         </Card>
     );
