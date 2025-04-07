@@ -1,48 +1,159 @@
 "use client";
 
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Check, ChevronsUpDown } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import {
+  Command,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command"
+import {
+  Form as ShadForm,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
-import { useEffect, useState } from "react";
-import { Combobox } from "./components/combobox";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter, useSearchParams } from 'next/navigation';
+
+const formSchema = z.object({
+  averageBill: z.string(),
+  roofSize: z.string({
+    required_error: "Please select a a roof size."
+  }),
+})
+
+
+const roofSizes = [
+  {
+    value: "small",
+    label: "Small",
+  },
+  {
+    value: "medium",
+    label: "Medium",
+  },
+  {
+    value: "large",
+    label: "Large",
+  },
+]
 
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const [averageBill, setAverageBill] = useState('0');
-  const [roof, setRoof] = useState('');
-  const [steps, setSteps] = useState(0);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      averageBill: ""
+    },
+  })
 
-  useEffect(() => {
-    console.log(steps);
-  },[steps])
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("bill", values.averageBill);
+    params.set("roofSize", values.roofSize);
+    router.push(`/calculation?${params.toString()}`);
+  }
 
   return (
-    <>
-      {steps !== 0 && <Button onClick={() => setSteps(steps - 1)} variant="outline" size="icon">
-        <ChevronLeft />
-      </Button>}
-      {steps === 0 &&
-        <>
-          <h2>Input your average monthly bill</h2>
-          <Input value={averageBill} onChange={(event) => setAverageBill(event.target.value)} type="number" placeholder="Averge monthly bill in sek" />
-        </>
-      }
-      {steps === 1 &&
-        <>
-          <h2>Select roof size</h2>
-          <Combobox></Combobox>
-        </>
-      }
-      {steps === 2 ?
-        <>
-          <h3>Monthly Savings</h3>
-          <p>123</p>
-        </>
-        :
-        <Button onClick={() => setSteps(steps + 1)} variant="outline">Next</Button>
-      }
-
-    </>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Svea solar calculator</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ShadForm {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="averageBill"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Monthly bill</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="roofSize"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Roof size</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-[200px] justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? roofSizes.find(
+                              (roofSize) => roofSize.value === field.value
+                            )?.label
+                            : "Select roof size"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandList>
+                          <CommandGroup>
+                            {roofSizes.map((roofSize) => (
+                              <CommandItem
+                                value={roofSize.label}
+                                key={roofSize.value}
+                                onSelect={() => {
+                                  form.setValue("roofSize", roofSize.value)
+                                }}
+                              >
+                                {roofSize.label}
+                                <Check
+                                  className={cn(
+                                    "ml-auto",
+                                    roofSize.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Submit</Button>
+          </form>
+        </ShadForm>
+      </CardContent>
+    </Card>
   );
 }
