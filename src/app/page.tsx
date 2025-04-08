@@ -32,7 +32,7 @@ import { useState } from "react";
 import CardLayout from "@/components/layout/cardLayout";
 
 const formSchema = z.object({
-  averageBill: z.string().min(1, { message: "Please write your monthly average bill" }),
+  averageBill: z.string().min(1, { message: "Please write your monthly average bill" }).regex(/^\d+$/, { message: "Only numbers" }),
   roofSize: z.string({
     required_error: "Please select a a roof size."
   }),

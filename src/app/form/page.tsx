@@ -23,8 +23,8 @@ import { useState } from 'react';
 const formSchema = z.object({
     name: z.string().min(1, { message: "Please write your name" }),
     email: z.string().min(1, { message: "Please write your email" }).email({ message: "Invalid email address" }),
-    phone: z.string().min(1, { message: "Please write your phone" }),
-    postcode: z.string().min(1, { message: "Please write your postcode" })
+    phone: z.string().min(1, { message: "Please write your phone" }).regex(/^\d+$/, { message: "Only numbers" }),
+    postcode: z.string().min(1, { message: "Please write your postcode" }).regex(/^\d+$/, { message: "Only numbers" })
 })
 
 export default function Form() {
