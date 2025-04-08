@@ -32,6 +32,7 @@ export default function Form() {
     const queryObject = { bill: searchParams.get('bill'), roofSize: searchParams.get('roofSize'), savings: searchParams.get('savings'), co2: searchParams.get('co2') }
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isErrorDialogOpen, setIsErrorDialogOpen] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -41,12 +42,20 @@ export default function Form() {
             phone: "",
             postcode: ""
         },
-    })
+    });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        const allValues = { ...values, ...queryObject }
-        localStorage.setItem('formData', JSON.stringify(allValues));
-        setIsDialogOpen(true);
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        const allValues = { ...values, ...queryObject };
+        const response = await fetch("api/form", {
+            method: "POST",
+            body: JSON.stringify({ values: allValues })
+        });
+        if (response.status === 200) {
+            localStorage.setItem('formData', JSON.stringify(allValues));
+            setIsDialogOpen(true);
+        } else {
+            setIsErrorDialogOpen(true);
+        }
     }
 
     return (
@@ -59,6 +68,11 @@ export default function Form() {
                             pathname: '/'
                         }}>Start over</Link>
                     </Button>
+                </DialogContent>
+            </Dialog>
+            <Dialog open={isErrorDialogOpen} onOpenChange={setIsErrorDialogOpen}>
+                <DialogContent>
+                    <DialogTitle>Something went wrong try again</DialogTitle>
                 </DialogContent>
             </Dialog>
             <CardLayout>
