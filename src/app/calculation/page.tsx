@@ -17,9 +17,10 @@ export default function Home() {
 
     const searchParams = useSearchParams();
     const bill = Number(searchParams.get('bill'));
-    const roofSize = searchParams.get('roofSize');
-    const savings = bill / roofSizeNumber[roofSize];
-    const co2 = bill / (roofSizeNumber[roofSize] + 13);
+    const roofSize = searchParams.get('roofSize') as keyof typeof roofSizeNumber;
+    const roofSizeValue = roofSize && roofSizeNumber[roofSize] ? roofSizeNumber[roofSize] : 1;
+    const savings = bill / roofSizeValue;
+    const co2 = bill / (roofSizeValue + 13);
 
 
     return (
@@ -28,7 +29,10 @@ export default function Home() {
             <p>co2 savings: {co2} g</p>
             <div className='flex justify-between'>
                 <Button asChild>
-                    <Link href="/"><ChevronLeft /> Back</Link>
+                    <Link href={{
+                        pathname: '/',
+                        query: { bill: bill, roofSize: roofSize, savings: savings, co2: co2 },
+                    }}><ChevronLeft /> Back</Link>
                 </Button>
                 <Button asChild>
                     <Link href={{

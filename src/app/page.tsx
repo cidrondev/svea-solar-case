@@ -65,7 +65,8 @@ export default function Home() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      averageBill: ""
+      averageBill: searchParams.get('bill') ?? "",
+      roofSize: searchParams.get('roofSize') ?? ""
     },
   })
 

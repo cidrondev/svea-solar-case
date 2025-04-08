@@ -16,6 +16,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import CardLayout from '@/components/layout/cardLayout';
+import { useSearchParams } from 'next/navigation';
 
 const formSchema = z.object({
     name: z.string(),
@@ -25,7 +26,7 @@ const formSchema = z.object({
 })
 
 export default function Form() {
-
+    const searchParams = useSearchParams();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -99,7 +100,10 @@ export default function Form() {
                     />
                     <div className='flex justify-between'>
                         <Button asChild>
-                            <Link href="/"><ChevronLeft /> Back</Link>
+                            <Link href={{
+                                pathname: '/calculation',
+                                query: { bill: searchParams.get('bill'), roofSize: searchParams.get('roofSize'), savings: searchParams.get('savings'), co2: searchParams.get('co2') },
+                            }}><ChevronLeft /> Back</Link>
                         </Button>
                         <Button type="submit">Submit</Button>
                     </div>
