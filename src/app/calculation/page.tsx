@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import { useSearchParams } from 'next/navigation';
 import CardLayout from '@/components/layout/cardLayout';
+import { Suspense } from 'react';
 
 const roofSizeNumber = {
     'small': 4,
@@ -13,7 +14,7 @@ const roofSizeNumber = {
 }
 
 
-export default function Calculation() {
+function Content() {
 
     const searchParams = useSearchParams();
     const bill = Number(searchParams.get('bill'));
@@ -25,7 +26,7 @@ export default function Calculation() {
 
 
     return (
-        <CardLayout>
+        <>
             <p>Monthly savings: {savings} sek</p>
             <p>co2 savings: {co2} g</p>
             <div className='flex justify-between'>
@@ -42,6 +43,18 @@ export default function Calculation() {
                     }}>Next</Link>
                 </Button>
             </div>
+        </>
+    );
+}
+
+export default function Calculation() {
+
+
+    return (
+        <CardLayout>
+            <Suspense>
+                <Content></Content>
+            </Suspense>
         </CardLayout>
     );
 }

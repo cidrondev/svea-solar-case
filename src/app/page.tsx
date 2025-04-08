@@ -1,6 +1,5 @@
 "use client";
 
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ChevronsUpDown } from "lucide-react"
 import { useForm } from "react-hook-form"
@@ -28,7 +27,7 @@ import {
 } from "@/components/ui/popover"
 import { Input } from "@/components/ui/input";
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import CardLayout from "@/components/layout/cardLayout";
 
 const formSchema = z.object({
@@ -54,9 +53,7 @@ const roofSizes = [
   },
 ]
 
-
-export default function Home() {
-
+function FormContent() {
   const [open, setOpen] = useState(false);
 
   const router = useRouter();
@@ -78,77 +75,87 @@ export default function Home() {
   }
 
   return (
+    <ShadForm {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="averageBill"
+          render={({ field }) => (
+            <FormItem className="w-[320px]">
+              <FormLabel>Monthly bill</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="roofSize"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Roof size</FormLabel>
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-[320px] justify-between",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value
+                        ? roofSizes.find(
+                          (roofSize) => roofSize.value === field.value
+                        )?.label
+                        : "Select roof size"}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-[320px] p-0">
+                  <Command>
+                    <CommandList>
+                      <CommandGroup>
+                        {roofSizes.map((roofSize) => (
+                          <CommandItem
+                            value={roofSize.label}
+                            key={roofSize.value}
+                            onSelect={() => {
+                              form.setValue("roofSize", roofSize.value)
+                              setOpen(false)
+                            }}
+                          >
+                            {roofSize.label}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex justify-end">
+          <Button type="submit">Submit</Button>
+        </div>
+      </form>
+    </ShadForm>
+  );
+}
+
+
+export default function Home() {
+
+  return (
     <CardLayout>
-      <ShadForm {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="averageBill"
-            render={({ field }) => (
-              <FormItem className="w-[320px]">
-                <FormLabel>Monthly bill</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="roofSize"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Roof size</FormLabel>
-                <Popover open={open} onOpenChange={setOpen}>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          "w-[320px] justify-between",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value
-                          ? roofSizes.find(
-                            (roofSize) => roofSize.value === field.value
-                          )?.label
-                          : "Select roof size"}
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[320px] p-0">
-                    <Command>
-                      <CommandList>
-                        <CommandGroup>
-                          {roofSizes.map((roofSize) => (
-                            <CommandItem
-                              value={roofSize.label}
-                              key={roofSize.value}
-                              onSelect={() => {
-                                form.setValue("roofSize", roofSize.value)
-                                setOpen(false)
-                              }}
-                            >
-                              {roofSize.label}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex justify-end">
-            <Button type="submit">Submit</Button>
-          </div>
-        </form>
-      </ShadForm>
+      <Suspense>
+        <FormContent></FormContent>
+      </Suspense>
     </CardLayout>
   );
 }
