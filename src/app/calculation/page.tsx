@@ -21,6 +21,7 @@ export default function Home() {
     const roofSizeValue = roofSize && roofSizeNumber[roofSize] ? roofSizeNumber[roofSize] : 1;
     const savings = bill / roofSizeValue;
     const co2 = bill / (roofSizeValue + 13);
+    const queryObject = { bill: bill, roofSize: roofSize, savings: savings, co2: co2 };
 
 
     return (
@@ -31,13 +32,13 @@ export default function Home() {
                 <Button asChild>
                     <Link href={{
                         pathname: '/',
-                        query: { bill: bill, roofSize: roofSize, savings: savings, co2: co2 },
+                        query: queryObject,
                     }}><ChevronLeft /> Back</Link>
                 </Button>
                 <Button asChild>
                     <Link href={{
                         pathname: '/form',
-                        query: { bill: bill, roofSize: roofSize, savings: savings, co2: co2 },
+                        query: queryObject,
                     }}>Next</Link>
                 </Button>
             </div>

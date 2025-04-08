@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/form";
 import CardLayout from '@/components/layout/cardLayout';
 import { useSearchParams } from 'next/navigation';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { useState } from 'react';
 
 const formSchema = z.object({
     name: z.string().min(1, { message: "Please write your name" }),
@@ -27,6 +29,9 @@ const formSchema = z.object({
 
 export default function Form() {
     const searchParams = useSearchParams();
+    const queryObject = { bill: searchParams.get('bill'), roofSize: searchParams.get('roofSize'), savings: searchParams.get('savings'), co2: searchParams.get('co2') }
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -39,76 +44,90 @@ export default function Form() {
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-        localStorage.setItem('formData', JSON.stringify(values));
+        const allValues = { ...values, ...queryObject }
+        localStorage.setItem('formData', JSON.stringify(allValues));
+        setIsDialogOpen(true);
     }
 
     return (
-        <CardLayout>
-            <ShadForm {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Name</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Phone</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="postcode"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Postcode</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <div className='flex justify-between'>
-                        <Button asChild>
-                            <Link href={{
-                                pathname: '/calculation',
-                                query: { bill: searchParams.get('bill'), roofSize: searchParams.get('roofSize'), savings: searchParams.get('savings'), co2: searchParams.get('co2') },
-                            }}><ChevronLeft /> Back</Link>
-                        </Button>
-                        <Button type="submit">Submit</Button>
-                    </div>
-                </form>
-            </ShadForm>
-        </CardLayout>
+        <>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent>
+                    <DialogTitle>Successfully added your information</DialogTitle>
+                    <Button asChild>
+                        <Link href={{
+                            pathname: '/'
+                        }}>Start over</Link>
+                    </Button>
+                </DialogContent>
+            </Dialog>
+            <CardLayout>
+                <ShadForm {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Phone</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="postcode"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Postcode</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <div className='flex justify-between'>
+                            <Button asChild>
+                                <Link href={{
+                                    pathname: '/calculation',
+                                    query: queryObject,
+                                }}><ChevronLeft /> Back</Link>
+                            </Button>
+                            <Button type="submit">Submit</Button>
+                        </div>
+                    </form>
+                </ShadForm>
+            </CardLayout>
+        </>
     )
 }
