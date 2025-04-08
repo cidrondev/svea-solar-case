@@ -22,3 +22,4 @@ To fix:
 - Make validation more specific for each field
 - Add a theme to the application
 - Add constant files and path files
+- Split the clientside parts and server side parts
