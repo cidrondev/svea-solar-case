@@ -19,10 +19,10 @@ import CardLayout from '@/components/layout/cardLayout';
 import { useSearchParams } from 'next/navigation';
 
 const formSchema = z.object({
-    name: z.string(),
-    email: z.string(),
-    phone: z.string(),
-    postcode: z.string()
+    name: z.string().min(1, { message: "Please write your name" }),
+    email: z.string().min(1, { message: "Please write your email" }).email({ message: "Invalid email address" }),
+    phone: z.string().min(1, { message: "Please write your phone" }),
+    postcode: z.string().min(1, { message: "Please write your postcode" })
 })
 
 export default function Form() {

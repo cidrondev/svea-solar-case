@@ -32,7 +32,7 @@ import { useState } from "react";
 import CardLayout from "@/components/layout/cardLayout";
 
 const formSchema = z.object({
-  averageBill: z.string(),
+  averageBill: z.string().min(1, { message: "Please write your monthly average bill" }),
   roofSize: z.string({
     required_error: "Please select a a roof size."
   }),
@@ -78,77 +78,77 @@ export default function Home() {
   }
 
   return (
-      <CardLayout>
-        <ShadForm {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="averageBill"
-              render={({ field }) => (
-                <FormItem className="w-[320px]">
-                  <FormLabel>Monthly bill</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="roofSize"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Roof size</FormLabel>
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-[320px] justify-between",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value
-                            ? roofSizes.find(
-                              (roofSize) => roofSize.value === field.value
-                            )?.label
-                            : "Select roof size"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[320px] p-0">
-                      <Command>
-                        <CommandList>
-                          <CommandGroup>
-                            {roofSizes.map((roofSize) => (
-                              <CommandItem
-                                value={roofSize.label}
-                                key={roofSize.value}
-                                onSelect={() => {
-                                  form.setValue("roofSize", roofSize.value)
-                                  setOpen(false)
-                                }}
-                              >
-                                {roofSize.label}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end">
-              <Button type="submit">Submit</Button>
-            </div>
-          </form>
-        </ShadForm>
-      </CardLayout>
+    <CardLayout>
+      <ShadForm {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="averageBill"
+            render={({ field }) => (
+              <FormItem className="w-[320px]">
+                <FormLabel>Monthly bill</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="roofSize"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Roof size</FormLabel>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-[320px] justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value
+                          ? roofSizes.find(
+                            (roofSize) => roofSize.value === field.value
+                          )?.label
+                          : "Select roof size"}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[320px] p-0">
+                    <Command>
+                      <CommandList>
+                        <CommandGroup>
+                          {roofSizes.map((roofSize) => (
+                            <CommandItem
+                              value={roofSize.label}
+                              key={roofSize.value}
+                              onSelect={() => {
+                                form.setValue("roofSize", roofSize.value)
+                                setOpen(false)
+                              }}
+                            >
+                              {roofSize.label}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex justify-end">
+            <Button type="submit">Submit</Button>
+          </div>
+        </form>
+      </ShadForm>
+    </CardLayout>
   );
 }
