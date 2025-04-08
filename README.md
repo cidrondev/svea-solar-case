@@ -21,3 +21,4 @@ To fix:
 - Look over variable names
 - Make validation more specific for each field
 - Add a theme to the application
+- Add constant files and path files
