@@ -13,7 +13,7 @@ const roofSizeNumber = {
 }
 
 
-export default function Home() {
+export default function Calculation() {
 
     const searchParams = useSearchParams();
     const bill = Number(searchParams.get('bill'));
