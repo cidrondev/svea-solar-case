@@ -27,9 +27,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from "react";
+import CardLayout from "@/components/layout/cardLayout";
 
 const formSchema = z.object({
   averageBill: z.string(),
@@ -77,11 +77,7 @@ export default function Home() {
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>Svea solar calculator</CardTitle>
-      </CardHeader>
-      <CardContent>
+      <CardLayout>
         <ShadForm {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -152,7 +148,6 @@ export default function Home() {
             </div>
           </form>
         </ShadForm>
-      </CardContent>
-    </Card>
+      </CardLayout>
   );
 }
